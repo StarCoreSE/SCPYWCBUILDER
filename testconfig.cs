@@ -1,14 +1,14 @@
 private AmmoDef Example_Ammo => new AmmoDef
 {
     AmmoMagazine = "Energy",
-BaseDamage = 4261,
+    BaseDamage = 100,
     HardPointUsable = true,
     NoGridOrArmorScaling = true, 
     Trajectory = new TrajectoryDef
     {
         MaxLifeTime = 3600,
-MaxTrajectory = 7570,
-DesiredSpeed = 5740,
+	MaxTrajectory = 300,
+	DesiredSpeed = 300,
     },
     AmmoGraphics = new GraphicDef
     {
@@ -20,27 +20,9 @@ DesiredSpeed = 5740,
 	       Enable = true,
 	       Length = 10f,
 	       Width = 0.1f,
-Color = Color(red: 500, green: 200, blue: 50, alpha: 1),
+	       Color = Color(red: 5, green: 2, blue: 1f, alpha: 1),
 	       Textures = new[] {"ProjectileTrailLine",},
 	   },
 	},
     },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
