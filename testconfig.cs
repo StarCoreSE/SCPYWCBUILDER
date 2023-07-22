@@ -1,7 +1,7 @@
 private AmmoDef Example_Ammo => new AmmoDef
 {
     AmmoMagazine = "Energy",
-    BaseDamage = 100,
+    BaseDamage = 342,
     HardPointUsable = true,
     NoGridOrArmorScaling = true, 
     Trajectory = new TrajectoryDef
