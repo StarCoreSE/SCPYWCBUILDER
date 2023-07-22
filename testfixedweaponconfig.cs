@@ -36,10 +36,10 @@
                 },
                 Loading = new LoadingDef
                 {
-                    RateOfFire = 80,
+                    RateOfFire = 395,
                     BarrelsPerShot = 1,
                     TrajectilesPerBarrel = 1,
-                    ReloadTime = 720,
+                    ReloadTime = 268,
                     MagsToLoad = 1,
                 },
                 Audio = new HardPointAudioDef
