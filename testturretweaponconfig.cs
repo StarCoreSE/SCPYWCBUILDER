@@ -48,10 +48,10 @@ WeaponDefinition LargeBlockArtilleryTurret => new WeaponDefinition
                 },
                 Loading = new LoadingDef
                 {
-                    RateOfFire = 80,
+                    RateOfFire = 697,
                     BarrelsPerShot = 1,
                     TrajectilesPerBarrel = 1,
-                    ReloadTime = 720,
+                    ReloadTime = 1545,
                     MagsToLoad = 1,
                 },
                 Audio = new HardPointAudioDef

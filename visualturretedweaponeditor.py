@@ -5,12 +5,12 @@ import re
 
 # Root window
 root = tk.Tk()
-root.title("Weapon Editor")
+root.title("Turreted Weapon Editor")
 
 # Function to read the current values from the configuration file
 def read_current_values():
     # Open file and read the contents
-    with open('testfixedweaponconfig.cs', 'r') as f:
+    with open('testturretweaponconfig.cs', 'r') as f:
         contents = f.read()
 
     # Find the values using regular expressions
@@ -49,9 +49,9 @@ def increment_slider(event):
     update_deviate_shot_angle(event)
 
 # Variables to store values
-rate_of_fire_var = tk.IntVar(value=500)
-reload_time_var = tk.IntVar(value=360)
-deviate_shot_angle_var = tk.IntVar(value=10)
+rate_of_fire_var = tk.IntVar(value=80)
+reload_time_var = tk.IntVar(value=720)
+deviate_shot_angle_var = tk.IntVar(value=30)
 
 # Read current values from the configuration file
 read_current_values()
@@ -67,7 +67,7 @@ reload_time_label = tk.Label(root, textvariable=reload_time_str)
 deviate_shot_angle_label = tk.Label(root, textvariable=deviate_shot_angle_str)
 
 # Slider widgets
-rate_of_fire_slider = ttk.Scale(root, from_=1, to=1200, variable=rate_of_fire_var, orient=tk.HORIZONTAL)
+rate_of_fire_slider = ttk.Scale(root, from_=1, to=1000, variable=rate_of_fire_var, orient=tk.HORIZONTAL)
 reload_time_slider = ttk.Scale(root, from_=1, to=3600, variable=reload_time_var, orient=tk.HORIZONTAL)
 deviate_shot_angle_slider = ttk.Scale(root, from_=0, to=180, variable=deviate_shot_angle_var, orient=tk.HORIZONTAL)
 
@@ -99,19 +99,19 @@ def save_config():
     deviate_shot_angle = deviate_shot_angle_var.get()
 
     # Open file and modify
-    with open('testfixedweaponconfig.cs', 'r') as f:
+    with open('testturretweaponconfig.cs', 'r') as f:
         contents = re.sub('RateOfFire = [0-9]*,', f'RateOfFire = {rate_of_fire},', f.read())
         contents = re.sub('ReloadTime = [0-9]*,', f'ReloadTime = {reload_time},', contents)
         contents = re.sub('DeviateShotAngle = [0-9]*,', f'DeviateShotAngle = {deviate_shot_angle},', contents)
 
     # Save changes
-    with open('testfixedweaponconfig.cs', 'w') as f:
+    with open('testturretweaponconfig.cs', 'w') as f:
         f.write(contents)
 
     # Update text box
     text.config(state='normal')
     text.delete('1.0', 'end')
-    text.insert('1.0', open('testfixedweaponconfig.cs').read())
+    text.insert('1.0', open('testturretweaponconfig.cs').read())
     text.config(state='disabled')
 
 
@@ -122,7 +122,7 @@ button.grid(row=3, column=0, columnspan=3, padx=10, pady=5)
 # Text box
 text = tk.Text(root)
 text.grid(row=4, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")
-text.insert('1.0', open('testfixedweaponconfig.cs').read())
+text.insert('1.0', open('testturretweaponconfig.cs').read())
 text.config(state='disabled')
 
 # Configure grid weights to make the text box expand when the window is resized
