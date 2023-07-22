@@ -5,7 +5,7 @@ import re
 
 # Root window
 root = tk.Tk()
-root.title("Configuration Editor")
+root.title("Ammo Editor")
 
 # Function to read the current values from the configuration file
 def read_current_values():

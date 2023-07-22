@@ -20,7 +20,7 @@ private AmmoDef Example_Ammo => new AmmoDef
 	       Enable = true,
 	       Length = 10f,
 	       Width = 0.1f,
-	       Color = Color(red: 113, green: 9, blue: 199, alpha: 1),
+	       Color = Color(red: 999, green: 55, blue: 199, alpha: 1), green: 55, blue: 199, alpha: 1),
 	       Textures = new[] {"ProjectileTrailLine",},
 	   },
 	},
