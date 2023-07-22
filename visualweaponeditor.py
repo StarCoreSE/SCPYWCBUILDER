@@ -67,9 +67,9 @@ reload_time_label = tk.Label(root, textvariable=reload_time_str)
 deviate_shot_angle_label = tk.Label(root, textvariable=deviate_shot_angle_str)
 
 # Slider widgets
-rate_of_fire_slider = ttk.Scale(root, from_=1, to=1000, variable=rate_of_fire_var, orient=tk.HORIZONTAL)
-reload_time_slider = ttk.Scale(root, from_=1, to=1000, variable=reload_time_var, orient=tk.HORIZONTAL)
-deviate_shot_angle_slider = ttk.Scale(root, from_=1, to=1000, variable=deviate_shot_angle_var, orient=tk.HORIZONTAL)
+rate_of_fire_slider = ttk.Scale(root, from_=1, to=1200, variable=rate_of_fire_var, orient=tk.HORIZONTAL)
+reload_time_slider = ttk.Scale(root, from_=1, to=3600, variable=reload_time_var, orient=tk.HORIZONTAL)
+deviate_shot_angle_slider = ttk.Scale(root, from_=0, to=180, variable=deviate_shot_angle_var, orient=tk.HORIZONTAL)
 
 # Bind slider motion to update functions
 rate_of_fire_slider.bind("<Motion>", update_rate_of_fire)
