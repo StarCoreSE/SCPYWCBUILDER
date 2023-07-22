@@ -109,9 +109,26 @@ def update_desired_speed(event):
     desired_speed_str.set(f'Desired Speed = {desired_speed_var.get()}')
 
 # Bind slider motion to update functions
-damage_slider.bind("<ButtonRelease>", update_damage)
-max_traj_slider.bind("<ButtonRelease>", update_max_traj)
-desired_speed_slider.bind("<ButtonRelease>", update_desired_speed)
+damage_slider.bind("<Motion>", update_damage)
+max_traj_slider.bind("<Motion>", update_max_traj)
+desired_speed_slider.bind("<Motion>", update_desired_speed)
+
+# Function to increment slider by one using mouse wheel
+def increment_slider(event):
+    if event.delta > 0:
+        event.widget.set(event.widget.get() + 1)
+    elif event.delta < 0:
+        event.widget.set(event.widget.get() - 1)
+
+    # Update labels in real-time
+    update_damage(event)
+    update_max_traj(event)
+    update_desired_speed(event)
+
+# Bind mouse wheel event to sliders
+damage_slider.bind("<MouseWheel>", increment_slider)
+max_traj_slider.bind("<MouseWheel>", increment_slider)
+desired_speed_slider.bind("<MouseWheel>", increment_slider)
 
 # Pack labels and sliders using grid layout
 damage_label.grid(row=0, column=0, padx=10, pady=5)
