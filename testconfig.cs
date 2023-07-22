@@ -1,13 +1,13 @@
 private AmmoDef Example_Ammo => new AmmoDef
 {
     AmmoMagazine = "Energy",
-    BaseDamage = 4745,
+    BaseDamage = 5000,
     HardPointUsable = true,
     NoGridOrArmorScaling = true, 
     Trajectory = new TrajectoryDef
     {
 		MaxLifeTime = 3600,
-		MaxTrajectory = 2927,
+		MaxTrajectory = 1977,
 		DesiredSpeed = 300,
     },
     AmmoGraphics = new GraphicDef
