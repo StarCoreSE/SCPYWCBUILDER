@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog
 import os
 import re
 
@@ -8,9 +9,9 @@ root = tk.Tk()
 root.title("Ammo Editor")
 
 # Function to read the current values from the configuration file
-def read_current_values():
+def read_current_values(file_path):
     # Open file and read the contents
-    with open('testammoconfig.cs', 'r') as f:
+    with open(file_path, 'r') as f:
         contents = f.read()
 
     # Find the values using regular expressions
@@ -55,8 +56,28 @@ color_green_var = tk.StringVar(value='2')
 color_blue_var = tk.StringVar(value='1')
 color_alpha_var = tk.StringVar(value='1')
 
-# Read current values from the configuration file
-read_current_values()
+# Function to open file selector and read the selected file
+def open_file():
+    global selected_file_path
+    file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Ammo Config File", filetypes=(("CS files", "*.cs"), ("All files", "*.*")))
+    if file_path:
+        selected_file_path = file_path
+        read_current_values(file_path)
+
+        # Update text box
+        text.config(state='normal')
+        text.delete('1.0', 'end')
+        text.insert('1.0', open(file_path).read())
+        text.config(state='disabled')
+
+# Button to open file selector
+open_button = ttk.Button(root, text="Open Ammo Config File", command=open_file)
+open_button.grid(row=0, column=0, columnspan=7, padx=10, pady=5)
+
+# Read current values from the default configuration file
+default_file_path = 'testammoconfig.cs'
+read_current_values(default_file_path)
+selected_file_path = default_file_path
 
 # String variables for label text
 damage_str = tk.StringVar(value=f'Damage = {damage_var.get()}')
@@ -131,33 +152,32 @@ max_traj_slider.bind("<MouseWheel>", increment_slider)
 desired_speed_slider.bind("<MouseWheel>", increment_slider)
 
 # Pack labels and sliders using grid layout
-damage_label.grid(row=0, column=0, padx=10, pady=5)
-damage_slider.grid(row=1, column=0, padx=10, pady=5)
+damage_label.grid(row=1, column=0, padx=10, pady=5)
+damage_slider.grid(row=2, column=0, padx=10, pady=5)
 
-max_traj_label.grid(row=0, column=1, padx=10, pady=5)
-max_traj_slider.grid(row=1, column=1, padx=10, pady=5)
+max_traj_label.grid(row=1, column=1, padx=10, pady=5)
+max_traj_slider.grid(row=2, column=1, padx=10, pady=5)
 
-desired_speed_label.grid(row=0, column=2, padx=10, pady=5)
-desired_speed_slider.grid(row=1, column=2, padx=10, pady=5)
+desired_speed_label.grid(row=1, column=2, padx=10, pady=5)
+desired_speed_slider.grid(row=2, column=2, padx=10, pady=5)
 
-color_label.grid(row=0, column=3, padx=10, pady=5)
-color_entry_label.grid(row=1, column=3, padx=10, pady=5)
-color_red_entry.grid(row=1, column=4, padx=2, pady=5)
-color_green_entry.grid(row=1, column=5, padx=2, pady=5)
-color_blue_entry.grid(row=1, column=6, padx=2, pady=5)
+color_label.grid(row=1, column=3, padx=10, pady=5)
+color_entry_label.grid(row=2, column=3, padx=10, pady=5)
+color_red_entry.grid(row=2, column=4, padx=2, pady=5)
+color_green_entry.grid(row=2, column=5, padx=2, pady=5)
+color_blue_entry.grid(row=2, column=6, padx=2, pady=5)
 
-color_alpha_label.grid(row=2, column=3, padx=10, pady=5)
-color_alpha_entry.grid(row=2, column=4, padx=2, pady=5)
+color_alpha_label.grid(row=3, column=3, padx=10, pady=5)
+color_alpha_entry.grid(row=3, column=4, padx=2, pady=5)
 
 # Color preview canvas
 color_preview_label = tk.Label(root, text="Color Preview:")
 color_preview_canvas = tk.Canvas(root, width=30, height=30, bg='white')
-color_preview_label.grid(row=2, column=5, padx=10, pady=5)
-color_preview_canvas.grid(row=2, column=6, padx=2, pady=5)
+color_preview_label.grid(row=3, column=5, padx=10, pady=5)
+color_preview_canvas.grid(row=3, column=6, padx=2, pady=5)
 
 # Save button click handler
 def save_config():
-
     # Get current values
     damage = damage_var.get()
     max_traj = max_traj_var.get()
@@ -171,7 +191,7 @@ def save_config():
     color_str.set(f'Color = Color(red: {color_red}, green: {color_green}, blue: {color_blue}, alpha: {color_alpha})')
 
     # Open file and modify
-    with open('testammoconfig.cs', 'r') as f:
+    with open(selected_file_path, 'r') as f:
         contents = re.sub('BaseDamage = [0-9]*,', f'BaseDamage = {damage},', f.read())
         contents = re.sub('MaxTrajectory = [0-9]*,', f'MaxTrajectory = {max_traj},', contents)
         contents = re.sub('DesiredSpeed = [0-9]*,', f'DesiredSpeed = {desired_speed},', contents)
@@ -181,30 +201,29 @@ def save_config():
         contents = re.sub('alpha: [0-9]*\),', f'alpha: {color_alpha}),', contents)
 
     # Save changes
-    with open('testammoconfig.cs', 'w') as f:
+    with open(selected_file_path, 'w') as f:
         f.write(contents)
 
     # Update text box
     text.config(state='normal')
     text.delete('1.0', 'end')
-    text.insert('1.0', open('testammoconfig.cs').read())
+    text.insert('1.0', open(selected_file_path).read())
     text.config(state='disabled')
-
 
 # Save button
 button = tk.Button(root, text="Save", command=save_config)
-button.grid(row=3, column=0, columnspan=7, padx=10, pady=5)
+button.grid(row=4, column=0, columnspan=7, padx=10, pady=5)
 
 # Text box
 text = tk.Text(root)
-text.grid(row=4, column=0, columnspan=7, padx=10, pady=5, sticky="nsew")
-text.insert('1.0', open('testammoconfig.cs').read())
+text.grid(row=5, column=0, columnspan=7, padx=10, pady=5, sticky="nsew")
+text.insert('1.0', open(default_file_path).read())
 text.config(state='disabled')
 
 # Configure grid weights to make the text box expand when the window is resized
 for i in range(7):
     root.grid_columnconfigure(i, weight=1)
 
-root.grid_rowconfigure(4, weight=1)
+root.grid_rowconfigure(5, weight=1)
 
 root.mainloop()

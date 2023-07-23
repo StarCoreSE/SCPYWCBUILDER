@@ -36,7 +36,7 @@
                 },
                 Loading = new LoadingDef
                 {
-                    RateOfFire = 1200,
+                    RateOfFire = 488,
                     BarrelsPerShot = 1,
                     TrajectilesPerBarrel = 1,
                     ReloadTime = 2805,
