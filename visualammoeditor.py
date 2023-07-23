@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
 import os
 import re
 
@@ -23,10 +24,16 @@ def read_current_values(file_path):
     # Update the slider variables with the found values
     if damage:
         damage_var.set(int(damage.group(1)))
+    else:
+        messagebox.showwarning("Warning", "Damage value not found in the file.")
     if max_traj:
         max_traj_var.set(int(max_traj.group(1)))
+    else:
+        messagebox.showwarning("Warning", "Max trajectory value not found in the file.")
     if desired_speed:
         desired_speed_var.set(int(desired_speed.group(1)))
+    else:
+        messagebox.showwarning("Warning", "Desired speed value not found in the file.")
     if color:
         color_red_var.set(color.group(1))
         color_green_var.set(color.group(2))
