@@ -27,8 +27,8 @@
             HardPoint = new HardPointDef
             {
                 PartName = "Artillery", 
-                DeviateShotAngle = 0.15f,
-                AimingTolerance = 2f,
+                DeviateShotAngle = 0.1f,
+                AimingTolerance = 2,
                 HardWare = new HardwareDef
                 {
                     InventorySize = 0.3f,
@@ -36,10 +36,10 @@
                 },
                 Loading = new LoadingDef
                 {
-                    RateOfFire = 879,
+                    RateOfFire = 1032,
                     BarrelsPerShot = 1,
                     TrajectilesPerBarrel = 1,
-                    ReloadTime = 2805,
+                    ReloadTime = 2135,
                     MagsToLoad = 1,
                 },
                 Audio = new HardPointAudioDef
