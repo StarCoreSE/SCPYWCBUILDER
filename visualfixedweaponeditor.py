@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog
+from tkinter import messagebox
 import os
 import re
 
@@ -7,10 +9,16 @@ import re
 root = tk.Tk()
 root.title("Fixed Weapon Editor")
 
+selected_file_path = ""
+
 # Function to read the current values from the configuration file
-def read_current_values():
+def read_current_values(file_path):
+    if not os.path.isfile(file_path):
+        messagebox.showerror("Error", "The selected file does not exist.")
+        return
+
     # Open file and read the contents
-    with open('testfixedweaponconfig.cs', 'r') as f:
+    with open(file_path, 'r') as f:
         contents = f.read()
 
     # Find the values using regular expressions
@@ -21,10 +29,22 @@ def read_current_values():
     # Update the slider variables with the found values
     if rate_of_fire:
         rate_of_fire_var.set(int(rate_of_fire.group(1)))
+    else:
+        messagebox.showwarning("Warning", "Rate of Fire value not found in the file.")
     if reload_time:
         reload_time_var.set(int(reload_time.group(1)))
+    else:
+        messagebox.showwarning("Warning", "Reload Time value not found in the file.")
     if deviate_shot_angle:
         deviate_shot_angle_var.set(int(deviate_shot_angle.group(1)))
+    else:
+        messagebox.showwarning("Warning", "Deviate Shot Angle value not found in the file.")
+
+# Function to validate integer input in entry fields
+def validate_integer_input(var, index, value, action):
+    if value.isdigit() or (value == "" and action == "1"):  # Allow empty string when deleting
+        return True
+    return False
 
 # Function to update labels when sliders change
 def update_rate_of_fire(event):
@@ -53,8 +73,10 @@ rate_of_fire_var = tk.IntVar(value=500)
 reload_time_var = tk.IntVar(value=360)
 deviate_shot_angle_var = tk.IntVar(value=10)
 
-# Read current values from the configuration file
-read_current_values()
+# Read current values from the default configuration file
+default_file_path = 'testfixedweaponconfig.cs'
+read_current_values(default_file_path)
+selected_file_path = default_file_path
 
 # String variables for label text
 rate_of_fire_str = tk.StringVar(value=f'RateOfFire = {rate_of_fire_var.get()}')
@@ -81,15 +103,33 @@ rate_of_fire_slider.bind("<MouseWheel>", increment_slider)
 reload_time_slider.bind("<MouseWheel>", increment_slider)
 deviate_shot_angle_slider.bind("<MouseWheel>", increment_slider)
 
+# Function to open file selector and read the selected file
+def open_file():
+    global selected_file_path
+    file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Fixed Weapon Config File", filetypes=(("CS files", "*.cs"), ("All files", "*.*")))
+    if file_path:
+        selected_file_path = file_path
+        read_current_values(file_path)
+
+        # Update text box
+        text.config(state='normal')
+        text.delete('1.0', 'end')
+        text.insert('1.0', open(file_path).read())
+        text.config(state='disabled')
+
+# Button to open file selector
+open_button = ttk.Button(root, text="Open Fixed Weapon Config File", command=open_file)
+open_button.grid(row=0, column=0, columnspan=3, padx=10, pady=5)
+
 # Pack labels and sliders using grid layout
-rate_of_fire_label.grid(row=0, column=0, padx=10, pady=5)
-rate_of_fire_slider.grid(row=1, column=0, padx=10, pady=5)
+rate_of_fire_label.grid(row=1, column=0, padx=10, pady=5)
+rate_of_fire_slider.grid(row=2, column=0, padx=10, pady=5)
 
-reload_time_label.grid(row=0, column=1, padx=10, pady=5)
-reload_time_slider.grid(row=1, column=1, padx=10, pady=5)
+reload_time_label.grid(row=1, column=1, padx=10, pady=5)
+reload_time_slider.grid(row=2, column=1, padx=10, pady=5)
 
-deviate_shot_angle_label.grid(row=0, column=2, padx=10, pady=5)
-deviate_shot_angle_slider.grid(row=1, column=2, padx=10, pady=5)
+deviate_shot_angle_label.grid(row=1, column=2, padx=10, pady=5)
+deviate_shot_angle_slider.grid(row=2, column=2, padx=10, pady=5)
 
 # Save button click handler
 def save_config():
@@ -99,21 +139,20 @@ def save_config():
     deviate_shot_angle = deviate_shot_angle_var.get()
 
     # Open file and modify
-    with open('testfixedweaponconfig.cs', 'r') as f:
+    with open(selected_file_path, 'r') as f:
         contents = re.sub('RateOfFire = [0-9]*,', f'RateOfFire = {rate_of_fire},', f.read())
         contents = re.sub('ReloadTime = [0-9]*,', f'ReloadTime = {reload_time},', contents)
         contents = re.sub('DeviateShotAngle = [0-9]*,', f'DeviateShotAngle = {deviate_shot_angle},', contents)
 
     # Save changes
-    with open('testfixedweaponconfig.cs', 'w') as f:
+    with open(selected_file_path, 'w') as f:
         f.write(contents)
 
     # Update text box
     text.config(state='normal')
     text.delete('1.0', 'end')
-    text.insert('1.0', open('testfixedweaponconfig.cs').read())
+    text.insert('1.0', open(selected_file_path).read())
     text.config(state='disabled')
-
 
 # Save button
 button = tk.Button(root, text="Save", command=save_config)
@@ -122,7 +161,7 @@ button.grid(row=3, column=0, columnspan=3, padx=10, pady=5)
 # Text box
 text = tk.Text(root)
 text.grid(row=4, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")
-text.insert('1.0', open('testfixedweaponconfig.cs').read())
+text.insert('1.0', open(default_file_path).read())
 text.config(state='disabled')
 
 # Configure grid weights to make the text box expand when the window is resized
