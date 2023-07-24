@@ -7,8 +7,8 @@ private AmmoDef Example_Ammo => new AmmoDef
     Trajectory = new TrajectoryDef
     {
 		MaxLifeTime = 3600,
-		MaxTrajectory = 10000,
-		DesiredSpeed = 5698,
+		MaxTrajectory = 4535,
+		DesiredSpeed = 8953,
     },
     AmmoGraphics = new GraphicDef
     {

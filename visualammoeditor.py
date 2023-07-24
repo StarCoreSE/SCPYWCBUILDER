@@ -9,11 +9,18 @@ import re
 root = tk.Tk()
 root.title("Ammo Editor")
 
-# Function to read the current values from the configuration file
+# Initialize selected_file_path to None
+selected_file_path = None
+
 def read_current_values(file_path):
     # Open file and read the contents
     with open(file_path, 'r') as f:
         contents = f.read()
+
+    # Check if the file contains the AmmoDef identifier
+    if "AmmoDef" not in contents:
+        messagebox.showwarning("Warning", "The selected file is not a valid ammo config.")
+        return
 
     # Find the values using regular expressions
     damage = re.search(r'BaseDamage = (\d+)', contents)
@@ -39,6 +46,7 @@ def read_current_values(file_path):
         color_green_var.set(color.group(2))
         color_blue_var.set(color.group(3))
         color_alpha_var.set(color.group(4))
+
 
 # Function to validate integer input in entry fields
 def validate_integer_input(var, index, value, action):
@@ -66,7 +74,8 @@ color_alpha_var = tk.StringVar(value='1')
 # Function to open file selector and read the selected file
 def open_file():
     global selected_file_path
-    file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Ammo Config File", filetypes=(("CS files", "*.cs"), ("All files", "*.*")))
+    file_path = filedialog.askopenfilename(initialdir=os.path.join(os.getcwd()), title="Select Ammo Config File", filetypes=(("CS files", "*.cs"), ("All files", "*.*")))
+    
     if file_path:
         selected_file_path = file_path
         read_current_values(file_path)
@@ -76,15 +85,40 @@ def open_file():
         text.delete('1.0', 'end')
         text.insert('1.0', open(file_path).read())
         text.config(state='disabled')
+    else:
+        selected_file_path = None  # Set selected_file_path to None if the user cancels the file dialog
+
+# Function to check if a default_ammo.cs file exists in the config folder
+def check_default_ammo_file():
+    global default_file_path  # Declare default_file_path as global
+    config_folder = os.path.join(os.getcwd(), "config")
+    default_file_path = os.path.join(config_folder, "default_ammo.cs")
+
+    if os.path.exists(default_file_path):
+        read_current_values(default_file_path)
+        selected_file_path = default_file_path
+    else:
+        messagebox.showinfo("Info", "Please grab the default_ammo.cs file in the 'config' folder and rename it to something unique.")
 
 # Button to open file selector
 open_button = ttk.Button(root, text="Open Ammo Config File", command=open_file)
 open_button.grid(row=0, column=0, columnspan=7, padx=10, pady=5)
 
 # Read current values from the default configuration file
-default_file_path = 'testammoconfig.cs'
-read_current_values(default_file_path)
-selected_file_path = default_file_path
+check_default_ammo_file()
+
+
+def check_for_cs_files():
+    cs_files = [file for file in os.listdir() if file.endswith(".cs")]
+    if not cs_files:
+        messagebox.showwarning("Warning", "There are no .cs files in the program directory. Please copy an ammo config file (e.g., default_ammo.cs) and name it something unique.")
+
+# Button to open file selector
+open_button = ttk.Button(root, text="Open Ammo Config File", command=open_file)
+open_button.grid(row=0, column=0, columnspan=7, padx=10, pady=5)
+
+# Check for .cs files in the program directory
+check_for_cs_files()
 
 # String variables for label text
 damage_str = tk.StringVar(value=f'Damage = {damage_var.get()}')
@@ -185,6 +219,12 @@ color_preview_canvas.grid(row=3, column=6, padx=2, pady=5)
 
 # Save button click handler
 def save_config():
+
+    global selected_file_path
+    if selected_file_path is None:
+        messagebox.showerror("Error", "No file is currently loaded. Please open an ammo config file first.")
+        return
+    
     # Get current values
     damage = damage_var.get()
     max_traj = max_traj_var.get()
@@ -224,12 +264,26 @@ button.grid(row=4, column=0, columnspan=7, padx=10, pady=5)
 # Text box
 text = tk.Text(root)
 text.grid(row=5, column=0, columnspan=7, padx=10, pady=5, sticky="nsew")
-text.insert('1.0', open(default_file_path).read())
-text.config(state='disabled')
+
+
+# Update the text box display based on whether a file is loaded or not
+def update_text_display():
+    if selected_file_path:
+        text.config(state='normal')
+        text.delete('1.0', 'end')
+        text.insert('1.0', open(selected_file_path).read())
+        text.config(state='disabled')
+    else:
+        text.config(state='normal')
+        text.delete('1.0', 'end')
+        text.config(state='disabled')
 
 # Configure grid weights to make the text box expand when the window is resized
 for i in range(7):
     root.grid_columnconfigure(i, weight=1)
+
+# Call update_text_display to initialize the text box display
+update_text_display()
 
 root.grid_rowconfigure(5, weight=1)
 
