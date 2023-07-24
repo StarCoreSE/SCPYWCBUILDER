@@ -19,7 +19,7 @@ def read_current_values(file_path):
 
     # Check if the file contains the AmmoDef identifier
     if "AmmoDef" not in contents:
-        messagebox.showwarning("Warning", "The selected file is not a valid ammo config.")
+        messagebox.showwarning("Warning", "The selected file is not a valid ammo config. Idiot.")
         return
 
     # Find the values using regular expressions
@@ -108,17 +108,12 @@ open_button.grid(row=0, column=0, columnspan=7, padx=10, pady=5)
 check_default_ammo_file()
 
 
-def check_for_cs_files():
-    cs_files = [file for file in os.listdir() if file.endswith(".cs")]
-    if not cs_files:
-        messagebox.showwarning("Warning", "There are no .cs files in the program directory. Please copy an ammo config file (e.g., default_ammo.cs) and name it something unique.")
-
 # Button to open file selector
 open_button = ttk.Button(root, text="Open Ammo Config File", command=open_file)
 open_button.grid(row=0, column=0, columnspan=7, padx=10, pady=5)
 
-# Check for .cs files in the program directory
-check_for_cs_files()
+
+
 
 # String variables for label text
 damage_str = tk.StringVar(value=f'Damage = {damage_var.get()}')
