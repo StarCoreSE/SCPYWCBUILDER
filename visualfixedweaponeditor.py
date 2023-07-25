@@ -7,9 +7,11 @@ import re
 
 # Root window
 root = tk.Tk()
-root.title("Fixed Weapon Editor")
+root.title("Weapon Editor")
+root.geometry("600x400")
 
 selected_file_path = ""
+weapon_mode = "Fixed"  # Default mode is "Fixed"
 
 def read_current_values(file_path):
     # Open file and read the contents
@@ -18,8 +20,17 @@ def read_current_values(file_path):
 
     # Check if the file contains "WeaponDefinition"
     if "new WeaponDefinition" not in contents:
-        messagebox.showwarning("Warning", "The selected file is not a valid weapon file. Idiot.")
+        messagebox.showwarning("Warning", "The selected file is not a valid weapon file.")
         return
+
+    # Check if the config file has AzimuthPartId = "None"
+    is_fixed_weapon = "AzimuthPartId = \"None\"" in contents
+
+    # Update the weapon mode label based on the config type
+    if is_fixed_weapon:
+        set_fixed_mode()
+    else:
+        set_turret_mode()
 
     # Find the values using regular expressions
     rate_of_fire = re.search(r'RateOfFire = (\d+)', contents)
@@ -34,6 +45,27 @@ def read_current_values(file_path):
     if deviate_shot_angle:
         deviate_shot_angle_var.set(deviate_shot_angle.group(1))
 
+    # Update the mode label text and color
+    mode_label.config(text="Weapon Mode: Fixed Weapon Config" if is_fixed_weapon else "Weapon Mode: Turret Weapon Config", foreground="red" if is_fixed_weapon else "blue")
+
+def set_fixed_mode():
+    global weapon_mode
+    weapon_mode = "Fixed"
+    mode_label.config(text="Weapon Mode: Fixed", foreground="red")
+    rate_of_fire_slider.config(from_=1, to=3600)
+    reload_time_slider.config(from_=1, to=3600)
+    deviate_shot_angle_entry.config(validate='key')
+
+def set_turret_mode():
+    global weapon_mode
+    weapon_mode = "Turret"
+    mode_label.config(text="Weapon Mode: Turret", foreground="blue")
+    rate_of_fire_slider.config(from_=1, to=3600)  # Customize the range as needed
+    reload_time_slider.config(from_=1, to=3600)  # Customize the range as needed
+    deviate_shot_angle_entry.config(validate='key', validatecommand=(root.register(validate_decimal_input), '%v', '%i', '%P', '%d'))
+
+
+
 # Function to validate decimal input in entry fields
 def validate_decimal_input(var, index, value, action):
     try:
@@ -41,6 +73,20 @@ def validate_decimal_input(var, index, value, action):
         return True
     except ValueError:
         return False
+
+def switch_weapon_mode():
+    if weapon_mode == "Fixed":
+        set_turret_mode()
+    else:
+        set_fixed_mode()
+
+# Toggle button to switch between Fixed and Turret modes
+toggle_button = ttk.Button(root, text="Switch Mode", command=lambda: switch_weapon_mode())
+toggle_button.grid(row=0, column=0, columnspan=5, padx=10, pady=5)
+
+# Label to display the current weapon mode
+mode_label = ttk.Label(root, text="Weapon Mode: Fixed", foreground="black")
+mode_label.grid(row=1, column=0, columnspan=5, padx=10, pady=5)
 
 
 # Variables to store values
@@ -54,6 +100,14 @@ def open_file():
     file_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Fixed Weapon Config File", filetypes=(("CS files", "*.cs"), ("All files", "*.*")))
     if file_path:
         selected_file_path = file_path
+
+        # Check if the file is a valid weapon file
+        with open(file_path, 'r') as f:
+            contents = f.read()
+            if "new WeaponDefinition" not in contents or "WeaponDefinition" not in contents:
+                messagebox.showwarning("Warning", "The selected file is not a valid weapon file.")
+                return
+
         read_current_values(file_path)
 
         # Update text box
@@ -62,8 +116,9 @@ def open_file():
         text.insert('1.0', open(file_path).read())
         text.config(state='disabled')
 
+
 # Button to open file selector
-open_button = ttk.Button(root, text="Open Fixed Weapon Config File", command=open_file)
+open_button = ttk.Button(root, text="Open Weapon Config File", command=open_file)
 open_button.grid(row=0, column=0, columnspan=5, padx=10, pady=5)
 
 
@@ -117,14 +172,14 @@ rate_of_fire_slider.bind("<MouseWheel>", increment_slider)
 reload_time_slider.bind("<MouseWheel>", increment_slider)
 
 # Pack labels, sliders, and entry fields using grid layout
-rate_of_fire_label.grid(row=1, column=0, padx=10, pady=5)
-rate_of_fire_slider.grid(row=2, column=0, padx=10, pady=5)
+rate_of_fire_label.grid(row=2, column=0, padx=10, pady=5)
+rate_of_fire_slider.grid(row=3, column=0, padx=10, pady=5)
 
-reload_time_label.grid(row=1, column=1, padx=10, pady=5)
-reload_time_slider.grid(row=2, column=1, padx=10, pady=5)
+reload_time_label.grid(row=2, column=1, padx=10, pady=5)
+reload_time_slider.grid(row=3, column=1, padx=10, pady=5)
 
-deviate_shot_angle_label.grid(row=1, column=2, padx=10, pady=5)
-deviate_shot_angle_entry.grid(row=2, column=2, padx=10, pady=5)
+deviate_shot_angle_label.grid(row=2, column=2, padx=10, pady=5)
+deviate_shot_angle_entry.grid(row=3, column=2, padx=10, pady=5)
 
 # Save button click handler
 def save_config():
@@ -133,8 +188,10 @@ def save_config():
     reload_time = reload_time_var.get()
     deviate_shot_angle = deviate_shot_angle_var.get()
 
-    # Add the 'f' suffix to deviate_shot_angle
-    deviate_shot_angle = f"{deviate_shot_angle}f"
+    # Add the 'f' suffix to deviate_shot_angle if it doesn't have one
+    if not deviate_shot_angle.endswith("f"):
+        deviate_shot_angle = f"{deviate_shot_angle}f"
+
     deviate_shot_angle_var.set(deviate_shot_angle)
 
     # Open file and modify
@@ -156,22 +213,22 @@ def save_config():
     text.insert('1.0', open(selected_file_path).read())
     text.config(state='disabled')
 
-
 # Save button
 button = tk.Button(root, text="Save", command=save_config)
-button.grid(row=3, column=0, columnspan=5, padx=10, pady=5)
+button.grid(row=4, column=0, columnspan=3, padx=10, pady=10)  # Span 3 columns instead of 5
 
 # Text box
 text = tk.Text(root)
-text.grid(row=4, column=0, columnspan=5, padx=10, pady=5, sticky="nsew")
+text.grid(row=5, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")  # Span 3 columns instead of 5
 if selected_file_path:
     text.insert('1.0', open(selected_file_path).read())
 text.config(state='disabled')
 
+
 # Configure grid weights to make the text box expand when the window is resized
-for i in range(5):
+for i in range(3):  # Adjust the loop range to match the number of columns used by widgets
     root.grid_columnconfigure(i, weight=1)
 
-root.grid_rowconfigure(4, weight=1)
+root.grid_rowconfigure(5, weight=1)  # Adjust the row number to the new row with the text box
 
 root.mainloop()

@@ -1,51 +1,64 @@
-        WeaponDefinition LargeBlockArtillery => new WeaponDefinition
+WeaponDefinition LargeBlockArtilleryTurret => new WeaponDefinition
         {
             Assignments = new ModelAssignmentsDef
             {
                 MountPoints = new[] {
                     new MountPointDef {
-                        SubtypeId = "LargeBlockLargeCalibreGun", 
-                        MuzzlePartId = "None", 
-                        AzimuthPartId = "None", 
-                        ElevationPartId = "None",
-                    },
-                    
+                        SubtypeId = "LargeCalibreTurret",
+                        MuzzlePartId = "MissileTurretBarrels",
+                        AzimuthPartId = "MissileTurretBase1", 
+                        ElevationPartId = "MissileTurretBarrels",
+                    },                  
                  },
                 Muzzles = new[] {
                     "muzzle_missile_001",
                 },
-            },            
-            Targeting = new TargetingDef //Note this is used by the CTC
+            },
+            Targeting = new TargetingDef
             {
                 Threats = new[] {
-                    Grids, 
+                    Grids,
                 },
                 SubSystems = new[] {
                     Power, Utility, Offense, Thrust, Production, Any, 
                 },
-            },            
+            },
             HardPoint = new HardPointDef
             {
-                PartName = "Artillery", 
-                DeviateShotAngle = 0.3f,
-                AimingTolerance = 2,
+                PartName = "Artillery Turret",
+                DeviateShotAngle = 0.3f, 
+                AimingTolerance = 2f, 
+                AimLeadingPrediction = Advanced, 
+                Ai = new AiDef
+                {
+                    TrackTargets = true,
+                    TurretAttached = true,
+                    TurretController = true,
+                },
                 HardWare = new HardwareDef
                 {
-                    InventorySize = 0.3f,
+                    RotateRate = 0.005f,
+                    ElevateRate = 0.005f,
+                    MinAzimuth = -180,
+                    MaxAzimuth = 180,
+                    MinElevation = -15,
+                    MaxElevation = 60,
+                    InventorySize = 0.6f,
                     Type = BlockWeapon,
                 },
                 Loading = new LoadingDef
                 {
-                    RateOfFire = 1842,
+                    RateOfFire = 80,
                     BarrelsPerShot = 1,
                     TrajectilesPerBarrel = 1,
-                    ReloadTime = 2093,
+                    ReloadTime = 720,
                     MagsToLoad = 1,
                 },
                 Audio = new HardPointAudioDef
                 {
                     FiringSound = "WepLargeCalibreShot",
                     FiringSoundPerShot = true,
+                    HardPointRotationSound = "WepTurretGatlingRotate",
                 },
                 Graphics = new HardPointParticleDef
                 {
