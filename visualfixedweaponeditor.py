@@ -17,7 +17,7 @@ def read_current_values(file_path):
         contents = f.read()
 
     # Check if the file contains "WeaponDefinition"
-    if "WeaponDefinition" not in contents:
+    if "new WeaponDefinition" not in contents:
         messagebox.showwarning("Warning", "The selected file is not a valid weapon file. Idiot.")
         return
 

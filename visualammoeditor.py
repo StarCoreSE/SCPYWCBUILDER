@@ -18,7 +18,7 @@ def read_current_values(file_path):
         contents = f.read()
 
     # Check if the file contains the AmmoDef identifier
-    if "AmmoDef" not in contents:
+    if "new AmmoDef" not in contents:
         messagebox.showwarning("Warning", "The selected file is not a valid ammo config. Idiot.")
         return
 
