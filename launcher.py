@@ -4,11 +4,8 @@ import os
 
 # Function to launch the Fixed Weapon Editor
 def launch_fixed_weapon_editor():
-    os.system("python visualfixedweaponeditor.py")
+    os.system("python visualweaponeditor.py")
 
-# Function to launch the Turreted Weapon Editor
-def launch_turreted_weapon_editor():
-    os.system("python visualturretedweaponeditor.py")
 
 # Function to launch the Ammo Editor
 def launch_ammo_editor():
@@ -24,12 +21,8 @@ window_height = 250
 root.geometry(f"{window_width}x{window_height}")
 
 # Button to run the Fixed Weapon Editor
-fixed_weapon_editor_button = ttk.Button(root, text="Run Fixed Weapon Editor", command=launch_fixed_weapon_editor)
-fixed_weapon_editor_button.pack(pady=20)
-
-# Button to run the Turreted Weapon Editor
-turreted_weapon_editor_button = ttk.Button(root, text="Run Turreted Weapon Editor", command=launch_turreted_weapon_editor)
-turreted_weapon_editor_button.pack(pady=20)
+weapon_editor_button = ttk.Button(root, text="Run Weapon Editor", command=launch_fixed_weapon_editor)
+weapon_editor_button.pack(pady=20)
 
 # Button to run the Ammo Editor
 ammo_editor_button = ttk.Button(root, text="Run Ammo Editor", command=launch_ammo_editor)
