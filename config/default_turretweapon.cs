@@ -26,7 +26,7 @@ WeaponDefinition LargeBlockArtilleryTurret => new WeaponDefinition
             HardPoint = new HardPointDef
             {
                 PartName = "Artillery Turret",
-                DeviateShotAngle = 0.3f, 
+                DeviateShotAngle = 0.2f, 
                 AimingTolerance = 2f, 
                 AimLeadingPrediction = Advanced, 
                 Ai = new AiDef
@@ -37,8 +37,8 @@ WeaponDefinition LargeBlockArtilleryTurret => new WeaponDefinition
                 },
                 HardWare = new HardwareDef
                 {
-                    RotateRate = 0.005f,
-                    ElevateRate = 0.005f,
+                    RotateRate = 0.001f,
+                    ElevateRate = 0.001f,
                     MinAzimuth = -180,
                     MaxAzimuth = 180,
                     MinElevation = -15,

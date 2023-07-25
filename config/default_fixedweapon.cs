@@ -27,7 +27,7 @@
             HardPoint = new HardPointDef
             {
                 PartName = "Artillery", 
-                DeviateShotAngle = 0.3f,
+                DeviateShotAngle = 0.12f,
                 AimingTolerance = 2,
                 HardWare = new HardwareDef
                 {

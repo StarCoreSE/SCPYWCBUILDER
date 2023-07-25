@@ -55,6 +55,11 @@ def set_fixed_mode():
     rate_of_fire_slider.config(from_=1, to=3600)
     reload_time_slider.config(from_=1, to=3600)
     deviate_shot_angle_entry.config(validate='key')
+    # Remove the RotateRate and ElevateRate widgets from the GUI
+    rotate_rate_label.grid_remove()
+    elevate_rate_label.grid_remove()
+    rotate_rate_entry.grid_remove()
+    elevate_rate_entry.grid_remove()
 
 def set_turret_mode():
     global weapon_mode
@@ -63,6 +68,11 @@ def set_turret_mode():
     rate_of_fire_slider.config(from_=1, to=3600)  # Customize the range as needed
     reload_time_slider.config(from_=1, to=3600)  # Customize the range as needed
     deviate_shot_angle_entry.config(validate='key', validatecommand=(root.register(validate_decimal_input), '%v', '%i', '%P', '%d'))
+    # Add the RotateRate and ElevateRate widgets back to the GUI with padding
+    rotate_rate_label.grid(row=5, column=0, padx=10, pady=5)
+    elevate_rate_label.grid(row=5, column=1, padx=10, pady=5)
+    rotate_rate_entry.grid(row=6, column=0, padx=10, pady=5)
+    elevate_rate_entry.grid(row=6, column=1, padx=10, pady=5)
 
 
 
@@ -93,6 +103,25 @@ mode_label.grid(row=1, column=0, columnspan=5, padx=10, pady=5)
 rate_of_fire_var = tk.IntVar(value=1)
 reload_time_var = tk.IntVar(value=1)
 deviate_shot_angle_var = tk.StringVar(value=1)
+
+
+# Variables to store values
+rotate_rate_var = tk.StringVar(value="0.005f")
+elevate_rate_var = tk.StringVar(value="0.005f")
+
+# Insert an additional row between the labels and the entry fields for RotateRate and ElevateRate
+tk.Label(root).grid(row=4)  # Empty label for padding
+
+
+# Labels for RotateRate and ElevateRate
+rotate_rate_label = tk.Label(root, text="RotateRate:")
+elevate_rate_label = tk.Label(root, text="ElevateRate:")
+
+# Entry fields for RotateRate and ElevateRate
+rotate_rate_entry = ttk.Entry(root, textvariable=rotate_rate_var, validate='key')
+elevate_rate_entry = ttk.Entry(root, textvariable=elevate_rate_var, validate='key')
+rotate_rate_entry['validatecommand'] = elevate_rate_entry['validatecommand'] = (root.register(validate_decimal_input), '%v', '%i', '%P', '%d')
+
 
 # Function to open file selector and read the selected file
 def open_file():
@@ -127,6 +156,10 @@ open_button.grid(row=0, column=0, columnspan=5, padx=10, pady=5)
 rate_of_fire_str = tk.StringVar(value=f'RateOfFire = {rate_of_fire_var.get()}')
 reload_time_str = tk.StringVar(value=f'ReloadTime = {reload_time_var.get()}')
 deviate_shot_angle_str = tk.StringVar(value=f'DeviateShotAngle = {deviate_shot_angle_var.get()}')
+rotate_rate_str = tk.StringVar(value=f'RotateRate = {rotate_rate_var.get()}')
+elevate_rate_str = tk.StringVar(value=f'ElevateRate = {elevate_rate_var.get()}')
+
+
 
 # Labels for sliders and deviate shot angle
 rate_of_fire_label = tk.Label(root, textvariable=rate_of_fire_str)
@@ -141,6 +174,8 @@ reload_time_slider = ttk.Scale(root, from_=1, to=3600, variable=reload_time_var,
 deviate_shot_angle_entry = ttk.Entry(root, textvariable=deviate_shot_angle_var, validate='key')
 deviate_shot_angle_entry['validatecommand'] = (root.register(validate_decimal_input), '%v', '%i', '%P', '%d')
 
+
+
 # Function to update labels when sliders change
 def update_rate_of_fire(event):
     rate_of_fire_str.set(f'RateOfFire = {rate_of_fire_var.get()}')
@@ -150,6 +185,17 @@ def update_reload_time(event):
 
 def update_deviate_shot_angle_label(event=None):
     deviate_shot_angle_str.set(f'DeviateShotAngle = {deviate_shot_angle_var.get()}')
+
+def update_rotate_rate_label(event=None):
+    rotate_rate_str.set(f'RotateRate = {rotate_rate_var.get()}')
+
+def update_elevate_rate_label(event=None):
+    elevate_rate_str.set(f'ElevateRate = {elevate_rate_var.get()}')
+
+rotate_rate_entry.bind("<FocusOut>", update_rotate_rate_label)
+elevate_rate_entry.bind("<FocusOut>", update_elevate_rate_label)
+
+
 
 # Bind events to update labels
 rate_of_fire_slider.bind("<Motion>", update_rate_of_fire)
@@ -181,31 +227,40 @@ reload_time_slider.grid(row=3, column=1, padx=10, pady=5)
 deviate_shot_angle_label.grid(row=2, column=2, padx=10, pady=5)
 deviate_shot_angle_entry.grid(row=3, column=2, padx=10, pady=5)
 
-# Save button click handler
 def save_config():
     # Get current values
     rate_of_fire = rate_of_fire_var.get()
     reload_time = reload_time_var.get()
     deviate_shot_angle = deviate_shot_angle_var.get()
+    rotate_rate = rotate_rate_var.get()
+    elevate_rate = elevate_rate_var.get()
 
-    # Add the 'f' suffix to deviate_shot_angle if it doesn't have one
+    # Add the 'f' suffix to deviate_shot_angle, rotate_rate, and elevate_rate if they don't have one
     if not deviate_shot_angle.endswith("f"):
         deviate_shot_angle = f"{deviate_shot_angle}f"
+    if not rotate_rate.endswith("f"):
+        rotate_rate = f"{rotate_rate}f"
+    if not elevate_rate.endswith("f"):
+        elevate_rate = f"{elevate_rate}f"
 
     deviate_shot_angle_var.set(deviate_shot_angle)
+    rotate_rate_var.set(rotate_rate)
+    elevate_rate_var.set(elevate_rate)
 
     # Open file and modify
     with open(selected_file_path, 'r') as f:
-        contents = re.sub(r'RateOfFire = \d+,', f'RateOfFire = {rate_of_fire},', f.read())
-        contents = re.sub(r'ReloadTime = \d+,', f'ReloadTime = {reload_time},', contents)
-        contents = re.sub(r'DeviateShotAngle = [\d.f]+,', f'DeviateShotAngle = {deviate_shot_angle},', contents)
+        contents = re.sub(r'DeviateShotAngle = [\d.f]+,', f'DeviateShotAngle = {deviate_shot_angle},', f.read())
+        contents = re.sub(r'RotateRate = [\d.f]+,', f'RotateRate = {rotate_rate},', contents)
+        contents = re.sub(r'ElevateRate = [\d.f]+,', f'ElevateRate = {elevate_rate},', contents)
 
     # Save changes
     with open(selected_file_path, 'w') as f:
         f.write(contents)
 
-    # Update DeviateShotAngle label
+    # Update DeviateShotAngle, RotateRate, and ElevateRate labels
     update_deviate_shot_angle_label()
+    update_rotate_rate_label()
+    update_elevate_rate_label()
 
     # Update text box
     text.config(state='normal')
@@ -213,22 +268,20 @@ def save_config():
     text.insert('1.0', open(selected_file_path).read())
     text.config(state='disabled')
 
+
 # Save button
 button = tk.Button(root, text="Save", command=save_config)
-button.grid(row=4, column=0, columnspan=3, padx=10, pady=10)  # Span 3 columns instead of 5
+button.grid(row=8, column=1, columnspan=1, padx=0, pady=0)  # Span 2 columns instead of 3, align to the right
 
 # Text box
 text = tk.Text(root)
-text.grid(row=5, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")  # Span 3 columns instead of 5
+text.grid(row=9, column=0, columnspan=3, padx=10, pady=5, sticky="nsew")  # Span 2 columns instead of 3
 if selected_file_path:
     text.insert('1.0', open(selected_file_path).read())
 text.config(state='disabled')
 
-
 # Configure grid weights to make the text box expand when the window is resized
-for i in range(3):  # Adjust the loop range to match the number of columns used by widgets
-    root.grid_columnconfigure(i, weight=1)
-
-root.grid_rowconfigure(5, weight=1)  # Adjust the row number to the new row with the text box
+root.grid_rowconfigure(9, weight=1)
+root.grid_columnconfigure(1, weight=1)
 
 root.mainloop()
