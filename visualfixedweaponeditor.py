@@ -45,6 +45,16 @@ def read_current_values(file_path):
     if deviate_shot_angle:
         deviate_shot_angle_var.set(deviate_shot_angle.group(1))
 
+    # Find the values for RotateRate and ElevateRate using regular expressions
+    rotate_rate = re.search(r'RotateRate = ([\d.f]+)', contents)
+    elevate_rate = re.search(r'ElevateRate = ([\d.f]+)', contents)
+
+    # Update the entry fields for RotateRate and ElevateRate with the found values
+    if rotate_rate:
+        rotate_rate_var.set(rotate_rate.group(1))
+    if elevate_rate:
+        elevate_rate_var.set(elevate_rate.group(1))
+
     # Update the mode label text and color
     mode_label.config(text="Weapon Mode: Fixed Weapon Config" if is_fixed_weapon else "Weapon Mode: Turret Weapon Config", foreground="red" if is_fixed_weapon else "blue")
 
