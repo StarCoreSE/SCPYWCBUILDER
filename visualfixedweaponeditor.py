@@ -275,7 +275,7 @@ button.grid(row=8, column=1, columnspan=1, padx=0, pady=0)  # Span 2 columns ins
 
 # Text box
 text = tk.Text(root)
-text.grid(row=9, column=0, columnspan=3, padx=10, pady=5)  # Span 2 columns instead of 3
+text.grid(row=9, column=0, columnspan=3, padx=0, pady=5)  # Span 2 columns instead of 3
 if selected_file_path:
     text.insert('1.0', open(selected_file_path).read())
 text.config(state='disabled')
